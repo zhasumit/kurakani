@@ -20,8 +20,10 @@ import { HOST, SEARCH_CONTACTS_ROUTES } from "@/utils/constants";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { getColor } from "@/lib/utils";
+import { useAppStore } from "@/store";
 
 const NewDm = () => {
+    const { setSelectedChatType, setSelectedChatData } = useAppStore();
     const [openNewContactModal, setOpenNewContactModal] = useState(false);
     const [searchedContacts, setSearchedContacts] = useState([]);
 
@@ -42,6 +44,13 @@ const NewDm = () => {
         } catch (error) {
             console.error(error);
         }
+    };
+
+    const selectNewContact = (contact) => {
+        setOpenNewContactModal(false);
+        setSelectedChatType("contact");
+        setSelectedChatData(contact);
+        setSearchedContacts([]);
     };
 
     return (
@@ -75,57 +84,62 @@ const NewDm = () => {
                             onChange={(e) => searchContacts(e.target.value)}
                         />
                     </div>
-                    <ScrollArea className="h-[48vh]">
-                        <div className="flex flex-col gap-3">
-                            {searchedContacts.map((contact) => (
-                                <div
-                                    key={contact._id}
-                                    className="flex gap-3 items-center cursor-pointer"
-                                >
-                                    <div className="w-12 h-12 relative ">
-                                        <Avatar className="h-12 w-12  rounded-full overflow-hidden">
-                                            {contact.image ? (
-                                                <AvatarImage
-                                                    src={`${HOST}/${contact.image}`}
-                                                    alt="profile"
-                                                    className={`${getColor(
-                                                        contact.color
-                                                    )} object-cover w-full h-full border-2 rounded-full`}
-                                                />
-                                            ) : (
-                                                <div
-                                                    className={`uppercase w-12 h-12 text-lg border-4 flex items-center justify-center text-white  rounded-full ${getColor(
-                                                        contact.color
-                                                    )}`}
-                                                >
-                                                    {contact.firstName
-                                                        ? contact.firstName
-                                                              .split("")
-                                                              .shift()
-                                                        : contact.email
-                                                              .split("")
-                                                              .shift()}
-                                                </div>
-                                            )}
-                                        </Avatar>
+                    {searchedContacts.length > 0 && (
+                        <ScrollArea className="h-[48vh]">
+                            <div className="flex flex-col gap-3">
+                                {searchedContacts.map((contact) => (
+                                    <div
+                                        key={contact._id}
+                                        className="flex gap-3 items-center cursor-pointer"
+                                        onClick={() =>
+                                            selectNewContact(contact)
+                                        }
+                                    >
+                                        <div className="w-12 h-12 relative ">
+                                            <Avatar className="h-12 w-12  rounded-full overflow-hidden">
+                                                {contact.image ? (
+                                                    <AvatarImage
+                                                        src={`${HOST}/${contact.image}`}
+                                                        alt="profile"
+                                                        className={`${getColor(
+                                                            contact.color
+                                                        )} object-cover w-full h-full border-2 rounded-full`}
+                                                    />
+                                                ) : (
+                                                    <div
+                                                        className={`uppercase w-12 h-12 text-lg border-2 flex items-center justify-center text-white  rounded-full ${getColor(
+                                                            contact.color
+                                                        )}`}
+                                                    >
+                                                        {contact.firstName
+                                                            ? contact.firstName
+                                                                  .split("")
+                                                                  .shift()
+                                                            : contact.email
+                                                                  .split("")
+                                                                  .shift()}
+                                                    </div>
+                                                )}
+                                            </Avatar>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span>
+                                                {contact.firstName &&
+                                                contact.lastName
+                                                    ? `${contact.firstName} ${contact.lastName}`
+                                                    : `${contact.email}`}
+                                            </span>
+                                            <span className="text-xs">
+                                                {contact.email}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="flex flex-col">
-                                        <span>
-                                            {contact.firstName &&
-                                            contact.lastName
-                                                ? `${contact.firstName} ${contact.lastName}`
-                                                : `${contact.email}`}
-                                        </span>
-                                        <span className="text-xs">
-                                            {contact.email}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </ScrollArea>
+                                ))}
+                            </div>
+                        </ScrollArea>
+                    )}
                     {searchedContacts.length <= 0 && (
-                        <div className="flex flex-col justify-center items-center  duration-500 transition-all">
+                        <div className="flex flex-col justify-center items-center mt-[10vh]  duration-500 transition-all">
                             <img src={duck} className="h-[15vh]" />
                             <div className="text-opacity-80 text-white flex flex-col gap-5 items-center lg:text-2xl text-lg transition-all duration-300 text-center">
                                 <h2 className=" tracking-tighter">

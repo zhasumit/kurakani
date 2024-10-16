@@ -39,8 +39,8 @@ const ProfileInfo = () => {
     return (
         <div className="absolute bottom-0  h-16 flex items-center justify-between  px-4 w-full bg-[#0a101f]">
             <div className="flex items-center justify-center gap-3">
-                <div className="w-12 h-12 relative ">
-                    <Avatar className="h-12 w-12  rounded-full overflow-hidden">
+                <div className="w-10 h-10 relative ">
+                    <Avatar className="h-10 w-10  rounded-full overflow-hidden">
                         {userInfo.image ? (
                             <AvatarImage
                                 src={`${HOST}/${userInfo.image}`}
@@ -51,7 +51,7 @@ const ProfileInfo = () => {
                             />
                         ) : (
                             <div
-                                className={`uppercase w-12 h-12 text-lg border-4 flex items-center justify-center text-white  rounded-full ${getColor(
+                                className={`uppercase w-10 h-10 text-lg border-2 flex items-center justify-center text-white  rounded-full ${getColor(
                                     userInfo.color
                                 )}`}
                             >
