@@ -1,4 +1,6 @@
+import { apiClient } from "@/lib/api-client";
 import { useAppStore } from "@/store";
+import { GET_ALL_MESSAGES_ROUTE } from "@/utils/constants";
 import moment from "moment";
 import { useEffect, useRef } from "react";
 
@@ -9,7 +11,28 @@ const MessageContainer = () => {
         selectedChatData,
         userInfo,
         selectedChatMessages,
+        setSelectedChatMessages,
     } = useAppStore();
+
+    useEffect(() => {
+        const getMessages = async () => {
+            try {
+                const res = await apiClient.post(
+                    GET_ALL_MESSAGES_ROUTE,
+                    { id: selectedChatData._id },
+                    { withCredentials: true }
+                );
+                if (res.data.messages) {
+                    setSelectedChatMessages(res.data.messages);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        if (selectedChatData._id) {
+            if (selectedChatType === "contact") getMessages();
+        }
+    }, [selectedChatData, selectedChatType, setSelectedChatMessages]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -44,15 +67,15 @@ const MessageContainer = () => {
                 message.sender === selectedChatData._id
                     ? "text-left"
                     : "text-right"
-            } mb-3`}
+            } mb-2`}
         >
             {message.messageType === "text" && (
                 <div
                     className={`${
                         message.sender !== selectedChatData._id
-                            ? "bg-[#8417ff]/60 text-[#white]/90 border-none text-left"
-                            : "bg-[#2a2b33]/40 text-white/80  border-none text-right"
-                    } border inline-block p-1 px-4 rounded my-1 max-w-[50%] break-words`}
+                            ? "bg-blue-600/60 text-[#white]/90 border-none text-left rounded-ee-2xl rounded-s-2xl"
+                            : "bg-[#2a2b33]/40 text-white/80  border-none text-right rounded-e-2xl rounded-es-2xl"
+                    } border inline-block p-1 px-3 rounded my-1 max-w-[50%] break-words`}
                 >
                     {message.content}
                 </div>
