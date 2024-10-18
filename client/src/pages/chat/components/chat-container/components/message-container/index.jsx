@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api-client";
+import { getChatColor, getColor } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { GET_ALL_MESSAGES_ROUTE } from "@/utils/constants";
 import moment from "moment";
@@ -73,9 +74,12 @@ const MessageContainer = () => {
                 <div
                     className={`${
                         message.sender !== selectedChatData._id
-                            ? "bg-blue-600/60 text-[#white]/90 border-none text-left rounded-ee-2xl rounded-s-2xl"
-                            : "bg-[#2a2b33]/40 text-white/80  border-none text-right rounded-e-2xl rounded-es-2xl"
-                    } border inline-block p-1 px-3 rounded my-1 max-w-[50%] break-words`}
+                            ? `${getChatColor(
+                                  userInfo.color
+                              )} text-[#white]/90 border-2 text-left rounded-ee-2xl rounded-s-2xl`
+                            : ` bg-[#2a2b33]/40 border-[#2a2b44] text-white/80 border-2 text-right rounded-e-2xl rounded-es-2xl`
+                    } border inline-block p-[6px] px-4 rounded my-1 max-w-[50%] break-words`}
+                    // bg-[#2a2b33]/40 border-[#2a2b44]
                 >
                     {message.content}
                 </div>

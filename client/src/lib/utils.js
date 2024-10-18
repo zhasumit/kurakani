@@ -21,3 +21,20 @@ export const getColor = (color) => {
     }
     return colors[0];
 };
+
+export const chatColors = [
+    "bg-[#47556980] border-[#47556990]",
+    "bg-[#ef444480] border-[#ef444490]",
+    "bg-[#22c55e80] border-[#22c55e90]",
+    "bg-[#6366f180] border-[#6366f190]",
+    "bg-[#FFF83A80] border-[#FFF83A90]",
+    "bg-[#FF3AB080] border-[#FF3AB090]",
+    "bg-[#d946ef80] border-[#d946ef90]",
+];
+
+export const getChatColor = (color) => {
+    if (color >= 0 && color < chatColors.length) {
+        return chatColors[color];
+    }
+    return chatColors[0];
+};
