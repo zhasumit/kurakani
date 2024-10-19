@@ -26,10 +26,10 @@ const ContactList = ({ contacts, isChannel = false }) => {
             {contacts.map((contact) => (
                 <div
                     key={contact._id}
-                    className={`pl-5 py-2 transition-all duration-200 cursor-pointer border-b-[1px] border-gray-600 ${
+                    className={`pl-5 py-2 transition-all duration-200 cursor-pointer  border-gray-600 ${
                         selectedChatData && selectedChatData._id === contact._id
-                            ? "bg-blue-900/50 hover:bg-blue-900/70"
-                            : "bg-[#f1f1f111] hover:bg-[#6983d93d]"
+                            ? "bg-blue-900/30 hover:bg-blue-900/60"
+                            : "hover:bg-blue-900/60"
                     }`}
                     onClick={() => handleClick(contact)}
                 >

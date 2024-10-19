@@ -10,32 +10,39 @@ const ChatHeader = () => {
             <div className="flex gap-5 items-center w-full justify-between">
                 <div className="flex gap-3 items-center justify-center">
                     <div className="w-10 h-10 relative ">
-                        <Avatar className="h-10 w-10  rounded-full overflow-hidden">
-                            {selectedChatData.image ? (
-                                <AvatarImage
-                                    src={`${HOST}/${selectedChatData.image}`}
-                                    alt="profile"
-                                    className={`${getColor(
-                                        selectedChatData.color
-                                    )} object-cover w-full h-full border-2 rounded-full`}
-                                />
-                            ) : (
-                                <div
-                                    className={`uppercase w-10 h-10 text-lg border-2 flex items-center justify-center text-white  rounded-full ${getColor(
-                                        selectedChatData.color
-                                    )}`}
-                                >
-                                    {selectedChatData.firstName
-                                        ? selectedChatData.firstName
-                                              .split("")
-                                              .shift()
-                                        : selectedChatData.email
-                                              .split("")
-                                              .shift()}
-                                </div>
-                            )}
-                        </Avatar>
+                        {selectedChatType === "contact" ? (
+                            <Avatar className="h-10 w-10  rounded-full overflow-hidden">
+                                {selectedChatData.image ? (
+                                    <AvatarImage
+                                        src={`${HOST}/${selectedChatData.image}`}
+                                        alt="profile"
+                                        className={`${getColor(
+                                            selectedChatData.color
+                                        )} object-cover w-full h-full border-2 rounded-full`}
+                                    />
+                                ) : (
+                                    <div
+                                        className={`uppercase w-10 h-10 text-lg border-2 flex items-center justify-center text-white  rounded-full ${getColor(
+                                            selectedChatData.color
+                                        )}`}
+                                    >
+                                        {selectedChatData.firstName
+                                            ? selectedChatData.firstName
+                                                  .split("")
+                                                  .shift()
+                                            : selectedChatData.email
+                                                  .split("")
+                                                  .shift()}
+                                    </div>
+                                )}
+                            </Avatar>
+                        ) : (
+                            <div className="bg-[#ffffff22] h-10 w-10 flex items-center justify-center rounded-full">
+                                #
+                            </div>
+                        )}
                     </div>
+                    {selectedChatType === "channel" && selectedChatData.name}
                     {selectedChatType === "contact" && (
                         <span>
                             {selectedChatData.firstName &&

@@ -47,7 +47,7 @@ const ContactsContainer = () => {
                 <img src={logo} className="h-5" alt="" />
                 <img src={longlogo} className="h-6" alt="" />
             </div>
-            <div className="my-4">
+            <div className="my-2">
                 <div className="flex items-center justify-between pr-5">
                     <Title text="Direct Messages" />
                     <NewDm />
@@ -56,7 +56,7 @@ const ContactsContainer = () => {
                     <ContactList contacts={directMessagesContacts} />
                 </div>
             </div>
-            <div className="my-4">
+            <div className="my-2 mt-10">
                 <div className="flex items-center justify-between pr-5">
                     <Title text="Channels" />
                     <CreateChannel />
