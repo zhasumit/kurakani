@@ -1,11 +1,16 @@
 import { apiClient } from "@/lib/api-client";
-import { getChatColor, getColor } from "@/lib/utils";
+import { getChatColor } from "@/lib/utils";
 import { useAppStore } from "@/store";
-import { GET_ALL_MESSAGES_ROUTE } from "@/utils/constants";
+import { GET_ALL_MESSAGES_ROUTE, HOST } from "@/utils/constants";
 import moment from "moment";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { BsFillFileEarmarkZipFill } from "react-icons/bs";
+import { HiDownload } from "react-icons/hi";
+import { IoClose } from "react-icons/io5";
 
 const MessageContainer = () => {
+    const [hoveredFileId, setHoveredFileId] = useState(null); // Use _id to track hovered file
+
     const scrollRef = useRef();
     const {
         selectedChatType,
@@ -13,7 +18,25 @@ const MessageContainer = () => {
         userInfo,
         selectedChatMessages,
         setSelectedChatMessages,
+        setIsDownloading,
+        setFileDownloadProgress,
     } = useAppStore();
+    const [showImage, setShowImage] = useState(false);
+    const [imageURL, setImageURL] = useState(null);
+
+    useEffect(() => {
+        const handleEsc = (event) => {
+            if (event.key === "Escape") {
+                setShowImage(false);
+                setImageURL(null);
+            }
+        };
+
+        window.addEventListener("keydown", handleEsc);
+        return () => {
+            window.removeEventListener("keydown", handleEsc);
+        };
+    }, [setShowImage, setImageURL]);
 
     useEffect(() => {
         const getMessages = async () => {
@@ -34,6 +57,12 @@ const MessageContainer = () => {
             if (selectedChatType === "contact") getMessages();
         }
     }, [selectedChatData, selectedChatType, setSelectedChatMessages]);
+
+    const checkIfImage = (filePath) => {
+        const imageRegex =
+            /\.(jpg|jpeg|png|gif|bmp|tiff|tif|webp|svg|ico|heic|heif)$/i;
+        return imageRegex.test(filePath);
+    };
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -62,6 +91,30 @@ const MessageContainer = () => {
         });
     };
 
+    const downloadFile = async (url) => {
+        setIsDownloading(true);
+        setFileDownloadProgress(0);
+        const res = await apiClient.get(`${HOST}/${url}`, {
+            responseType: "blob",
+            onDownloadProgress: (progress) => {
+                const { loaded, total } = progress;
+                const percentCompleted = Math.round((loaded / total) * 100);
+                setFileDownloadProgress(percentCompleted);
+            },
+        });
+        // create a temp a link and then make it active after adding to document and then revoke it
+        const urlBlob = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement("a");
+        link.href = urlBlob;
+        link.setAttribute("download", url.split("/").pop());
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(urlBlob);
+        setIsDownloading(false);
+        setFileDownloadProgress(0);
+    };
+
     const renderDMMessages = (message) => (
         <div
             className={`${
@@ -77,11 +130,56 @@ const MessageContainer = () => {
                             ? `${getChatColor(
                                   userInfo.color
                               )} text-[#white]/90 border-2 text-left rounded-ee-2xl rounded-s-2xl`
-                            : ` bg-[#2a2b33]/40 border-[#2a2b44] text-white/80 border-2 text-right rounded-e-2xl rounded-es-2xl`
+                            : ` bg-[#2a2b33]/40 border-[#2a2b44] text-white/80 border-2 rounded-e-2xl rounded-es-2xl`
                     } border inline-block p-[6px] px-4 rounded my-1 max-w-[50%] break-words`}
-                    // bg-[#2a2b33]/40 border-[#2a2b44]
                 >
                     {message.content}
+                </div>
+            )}
+            {message.messageType === "file" && (
+                <div
+                    className={`${
+                        message.sender !== selectedChatData._id
+                            ? `${getChatColor(
+                                  userInfo.color
+                              )} text-[#white]/90 border-2 text-left rounded-ee-2xl rounded-s-2xl`
+                            : ` bg-[#2a2b33]/40 border-[#2a2b44] text-white/80 border-2 text-right rounded-e-2xl rounded-es-2xl`
+                    } border inline-block p-[6px] rounded my-1 max-w-[50%] break-words`}
+                >
+                    {checkIfImage(message.fileUrl) ? (
+                        <div
+                            className="cursor-pointer"
+                            onClick={() => {
+                                setShowImage(true);
+                                setImageURL(message.fileUrl);
+                            }}
+                        >
+                            <img
+                                src={`${HOST}/${message.fileUrl}`}
+                                height={300}
+                                width={300}
+                                alt="file"
+                            />
+                        </div>
+                    ) : (
+                        <div className="flex items-center justify-center gap-2 duration-200 transition-all">
+                            <span
+                                onMouseEnter={() =>
+                                    setHoveredFileId(message._id)
+                                }
+                                onMouseLeave={() => setHoveredFileId(null)}
+                                className="text-white/80 text-2xl bg-black/20 rounded-full p-3 duration-200 transition-all hover:bg-black/50"
+                                onClick={() => downloadFile(message.fileUrl)}
+                            >
+                                {hoveredFileId === message._id ? ( // Show download icon only for hovered file
+                                    <HiDownload />
+                                ) : (
+                                    <BsFillFileEarmarkZipFill />
+                                )}
+                            </span>
+                            <span>{message.fileUrl.split("/").pop()}</span>
+                        </div>
+                    )}
                 </div>
             )}
             <div className="text-xs text-gray-600">
@@ -94,6 +192,33 @@ const MessageContainer = () => {
         <div className="flex-1 overflow-y-auto scrollbar-hidden p-3 px-6 md:w-[65vw] lg:w-[70vw] xl:w-[80vw] sm:w-full">
             {renderMessages()}
             <div ref={scrollRef} />
+            {showImage && (
+                <div className="fixed z-[1000] top-0 left-0 h-[100vh] w-[100vw] flex  items-center justify-center backdrop-blur-md flex-col">
+                    <div>
+                        <img
+                            src={`${HOST}/${imageURL}`}
+                            className="h-[80vh] w-full bg-cover"
+                        />
+                    </div>
+                    <div className="flex gap-3 fixed top-0 right-8 mt-5">
+                        <button
+                            className="text-white/80 text-2xl bg-black/20 rounded-full p-3 duration-200 transition-all hover:bg-black/50"
+                            onClick={() => downloadFile(imageURL)}
+                        >
+                            <HiDownload />
+                        </button>
+                        <button
+                            className="text-white/80 text-2xl bg-black/20 rounded-full p-3 duration-200 transition-all hover:bg-black/50"
+                            onClick={() => {
+                                setShowImage(false);
+                                setImageURL(null);
+                            }}
+                        >
+                            <IoClose />
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

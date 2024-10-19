@@ -23,13 +23,13 @@ export const getColor = (color) => {
 };
 
 export const chatColors = [
-    "bg-[#47556980] border-[#47556990]",
-    "bg-[#ef444480] border-[#ef444490]",
-    "bg-[#22c55e80] border-[#22c55e90]",
-    "bg-[#6366f180] border-[#6366f190]",
-    "bg-[#FFF83A80] border-[#FFF83A90]",
-    "bg-[#FF3AB080] border-[#FF3AB090]",
-    "bg-[#d946ef80] border-[#d946ef90]",
+    "bg-[#47556970] border-[#47556975]",
+    "bg-[#ef444470] border-[#ef444475]",
+    "bg-[#22c55e70] border-[#22c55e75]",
+    "bg-[#6366f170] border-[#6366f175]",
+    "bg-[#FFF83A70] border-[#FFF83A75]",
+    "bg-[#FF3AB070] border-[#FF3AB075]",
+    "bg-[#d946ef70] border-[#d946ef75]",
 ];
 
 export const getChatColor = (color) => {
