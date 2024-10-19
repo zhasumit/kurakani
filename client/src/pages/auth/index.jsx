@@ -110,13 +110,13 @@ const Auth = () => {
                             <TabsList className="bg-transparent w-full rounded-none">
                                 <TabsTrigger
                                     value="login"
-                                    className="text-lg data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-3 transition-all duration-300"
+                                    className="text-lg data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-blue-700 p-3 transition-all duration-300"
                                 >
                                     Login
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="signup"
-                                    className="text-lg data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-3 transition-all duration-200"
+                                    className="text-lg data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-blue-700 p-3 transition-all duration-200"
                                 >
                                     Signup
                                 </TabsTrigger>
