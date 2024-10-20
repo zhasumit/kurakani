@@ -38,3 +38,20 @@ export const getChatColor = (color) => {
     }
     return chatColors[0];
 };
+
+export const textColor = [
+    "text-[#47556975]",
+    "text-[#ef444475]",
+    "text-[#22c55e75]",
+    "text-[#6366f175]",
+    "text-[#FFF83A75]",
+    "text-[#FF3AB075]",
+    "text-[#d946ef75]",
+];
+
+export const getTextColor = (color) => {
+    if (color >= 0 && color < textColor.length) {
+        return textColor[color];
+    }
+    return textColor[0];
+};

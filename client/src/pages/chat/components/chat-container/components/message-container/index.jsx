@@ -1,5 +1,6 @@
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { apiClient } from "@/lib/api-client";
-import { getChatColor } from "@/lib/utils";
+import { getChatColor, getColor } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { GET_ALL_MESSAGES_ROUTE, HOST } from "@/utils/constants";
 import moment from "moment";
@@ -86,6 +87,8 @@ const MessageContainer = () => {
                     )}
                     {selectedChatType === "contact" &&
                         renderDMMessages(message)}
+                    {selectedChatType === "channel" &&
+                        renderChannelMessages(message)}
                 </div>
             );
         });
@@ -121,7 +124,7 @@ const MessageContainer = () => {
                 message.sender === selectedChatData._id
                     ? "text-left"
                     : "text-right"
-            } mb-2`}
+            } mb-1`}
         >
             {message.messageType === "text" && (
                 <div
@@ -187,6 +190,126 @@ const MessageContainer = () => {
             </div>
         </div>
     );
+
+    const renderChannelMessages = (message) => {
+        return (
+            <div
+                className={`mt-3 ${
+                    message.sender._id !== userInfo.id
+                        ? "text-left"
+                        : "text-right"
+                }`}
+            >
+                {message.sender._id !== userInfo.id ? (
+                    <div className="flex items-center justify-start gap-1 tracking-tight">
+                        <Avatar className="h-5 w-5  rounded-full overflow-hidden -ml-2">
+                            {message.sender.image ? (
+                                <AvatarImage
+                                    src={`${HOST}/${message.sender.image}`}
+                                    alt="profile"
+                                    className={`${getColor(
+                                        message.sender.color
+                                    )} object-cover w-full h-full border-2 rounded-full`}
+                                />
+                            ) : (
+                                <div
+                                    className={`uppercase w-5 h-5 text-xs border-2 flex items-center justify-center text-white rounded-full ${getColor(
+                                        message.sender.color
+                                    )}`}
+                                >
+                                    {message.sender.firstName
+                                        ? message.sender.firstName
+                                              .split("")
+                                              .shift()
+                                        : message.sender.email
+                                              .split("")
+                                              .shift()}
+                                </div>
+                            )}
+                        </Avatar>
+                        <span className={`text-sm text-neutral-400`}>
+                            {message.sender.firstName && message.sender.lastName
+                                ? `${message.sender.firstName} ${message.sender.lastName}`
+                                : `${message.sender.email}`}
+                        </span>
+                        <span className="text-xs text-neutral-500">
+                            {moment(message.timestamp).format("LT")}
+                        </span>
+                    </div>
+                ) : (
+                    <div>
+                        <span className={`text-sm text-neutral-400`}>You </span>
+                        <span className="text-xs text-neutral-500">
+                            {moment(message.timestamp).format("LT")}
+                        </span>
+                    </div>
+                )}
+
+                {message.messageType === "file" && (
+                    <div
+                        className={`${
+                            message.sender._id === userInfo.id
+                                ? `${getChatColor(
+                                      userInfo.color
+                                  )} text-[#white]/90 border-2 text-left rounded-ee-2xl rounded-s-2xl`
+                                : ` bg-[#2a2b33]/40 border-[#2a2b44] text-white/80 border-2 text-right rounded-e-2xl rounded-es-2xl`
+                        } border inline-block p-[6px] rounded my-1 max-w-[50%] break-words`}
+                    >
+                        {checkIfImage(message.fileUrl) ? (
+                            <div
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    setShowImage(true);
+                                    setImageURL(message.fileUrl);
+                                }}
+                            >
+                                <img
+                                    src={`${HOST}/${message.fileUrl}`}
+                                    height={300}
+                                    width={300}
+                                    alt="file"
+                                />
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-center gap-2 duration-200 transition-all">
+                                <span
+                                    onMouseEnter={() =>
+                                        setHoveredFileId(message._id)
+                                    }
+                                    onMouseLeave={() => setHoveredFileId(null)}
+                                    className="text-white/80 text-2xl bg-black/20 rounded-full p-3 duration-200 transition-all hover:bg-black/50"
+                                    onClick={() =>
+                                        downloadFile(message.fileUrl)
+                                    }
+                                >
+                                    {hoveredFileId === message._id ? ( // Show download icon only for hovered file
+                                        <HiDownload />
+                                    ) : (
+                                        <BsFillFileEarmarkZipFill />
+                                    )}
+                                </span>
+                                <span>{message.fileUrl.split("/").pop()}</span>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {message.messageType === "text" && (
+                    <div
+                        className={`${
+                            message.sender._id === userInfo.id
+                                ? `${getChatColor(
+                                      userInfo.color
+                                  )} text-[#white]/90 border-2 text-left rounded-ee-2xl rounded-s-2xl`
+                                : ` bg-[#2a2b33]/40 border-[#2a2b44] text-white/80 border-2 rounded-e-2xl rounded-es-2xl`
+                        } border inline-block p-[6px] px-4 rounded my-1 max-w-[50%] break-words`}
+                    >
+                        {message.content}
+                    </div>
+                )}
+            </div>
+        );
+    };
 
     return (
         <div className="flex-1 overflow-y-auto scrollbar-hidden p-3 px-6 md:w-[65vw] lg:w-[70vw] xl:w-[80vw] sm:w-full">
