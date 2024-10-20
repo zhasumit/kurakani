@@ -154,7 +154,7 @@ const MessageContainer = () => {
                                   userInfo.color
                               )} text-[#white]/90 border-2 text-left rounded-ee-2xl rounded-s-2xl`
                             : ` bg-[#2a2b33]/40 border-[#2a2b44] text-white/80 border-2 rounded-e-2xl rounded-es-2xl`
-                    } border inline-block p-[6px] px-4 rounded my-1 max-w-[50%] break-words`}
+                    } border inline-block p-[6px] px-4 rounded my-1 max-w-[65%] break-words`}
                 >
                     {message.content}
                 </div>

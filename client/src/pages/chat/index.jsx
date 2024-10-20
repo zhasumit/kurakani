@@ -41,7 +41,7 @@ const Chat = () => {
             )}
             <ContactsContainer />
             {selectedChatType === undefined ? (
-                <EmptyChatContainer />
+                <EmptyChatContainer className="hidden sm:block" />
             ) : (
                 <ChatContainer />
             )}

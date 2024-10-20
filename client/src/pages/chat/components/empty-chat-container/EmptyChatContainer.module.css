@@ -1,0 +1,9 @@
+.empty-chat-container {
+    display: none;
+}
+
+@media (max-width: 770px) {
+    .empty-chat-container {
+        width: 0;
+    }
+}
