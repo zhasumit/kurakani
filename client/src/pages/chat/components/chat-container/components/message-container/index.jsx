@@ -2,7 +2,11 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { apiClient } from "@/lib/api-client";
 import { getChatColor, getColor } from "@/lib/utils";
 import { useAppStore } from "@/store";
-import { GET_ALL_MESSAGES_ROUTE, HOST } from "@/utils/constants";
+import {
+    GET_ALL_MESSAGES_ROUTE,
+    GET_CHANNEL_MESSAGES_ROUTE,
+    HOST,
+} from "@/utils/constants";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { BsFillFileEarmarkZipFill } from "react-icons/bs";
@@ -54,8 +58,24 @@ const MessageContainer = () => {
                 console.log(error);
             }
         };
+
+        const getChannelMessages = async () => {
+            try {
+                const res = await apiClient.get(
+                    `${GET_CHANNEL_MESSAGES_ROUTE}/${selectedChatData._id}`,
+                    { withCredentials: true }
+                );
+                if (res.data.messages) {
+                    setSelectedChatMessages(res.data.messages);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
         if (selectedChatData._id) {
             if (selectedChatType === "contact") getMessages();
+            else if (selectedChatType === "channel") getChannelMessages();
         }
     }, [selectedChatData, selectedChatType, setSelectedChatMessages]);
 
@@ -124,7 +144,7 @@ const MessageContainer = () => {
                 message.sender === selectedChatData._id
                     ? "text-left"
                     : "text-right"
-            } mb-1`}
+            } mb-3`}
         >
             {message.messageType === "text" && (
                 <div
@@ -194,7 +214,7 @@ const MessageContainer = () => {
     const renderChannelMessages = (message) => {
         return (
             <div
-                className={`mt-3 ${
+                className={`mb-3 ${
                     message.sender._id !== userInfo.id
                         ? "text-left"
                         : "text-right"

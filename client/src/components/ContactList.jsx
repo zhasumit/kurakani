@@ -8,7 +8,6 @@ const ContactList = ({ contacts, isChannel = false }) => {
         selectedChatData,
         setSelectedChatData,
         setSelectedChatType,
-        selectedChatType,
         setSelectedChatMessages,
     } = useAppStore();
 
